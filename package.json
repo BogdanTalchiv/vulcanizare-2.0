@@ -1,0 +1,25 @@
+{
+  "name": "forcecar-vulcanizare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ForceCar — Vulcanizare NON-STOP 24/7, str. Ismail 103, Chișinău",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "images": "node scripts/optimize-images.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "ffmpeg-static": "^5.3.0",
+    "sharp": "^0.35.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0"
+  }
+}
