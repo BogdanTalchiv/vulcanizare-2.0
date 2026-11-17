@@ -16,6 +16,36 @@ function initNav() {
   new IntersectionObserver(([entry]) => nav.classList.toggle('is-compact', !entry.isIntersecting)).observe(sentinel);
 }
 
+function initMenu() {
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const toggle = nav?.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const label = toggle?.querySelector<HTMLElement>('[data-menu-label]');
+  const menu = toggle && document.getElementById(toggle.getAttribute('aria-controls') ?? '');
+  if (!nav || !toggle || !label || !menu) return;
+
+  const wide = window.matchMedia('(min-width: 1100px)');
+  const setOpen = (open: boolean) => {
+    nav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    label.textContent = open ? 'Închide meniul' : 'Deschide meniul';
+  };
+
+  toggle.hidden = false;
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  menu.addEventListener('click', (event) => {
+    if ((event.target as Element).closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !nav.classList.contains('is-open')) return;
+    setOpen(false);
+    toggle.focus();
+  });
+  document.addEventListener('click', (event) => {
+    if (nav.classList.contains('is-open') && !nav.contains(event.target as Node)) setOpen(false);
+  });
+  wide.addEventListener('change', () => setOpen(false));
+}
+
 function initReveal() {
   const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
   if (reducedMotion.matches || !('IntersectionObserver' in window)) {
@@ -153,7 +183,8 @@ function initRepair() {
 
 /** Seamless loop: two players crossfade so the clip's black fade-in/out never shows. */
 function initLoopVideo(host: HTMLElement) {
-  const src = host.dataset.src ?? '';
+  const wide = host.dataset.media ? window.matchMedia(host.dataset.media) : null;
+  const source = () => (wide?.matches && host.dataset.srcDesktop ? host.dataset.srcDesktop : (host.dataset.src ?? ''));
   const start = Number(host.dataset.start ?? 0);
   const end = Number(host.dataset.end ?? 0);
   const fade = 0.7;
@@ -208,7 +239,7 @@ function initLoopVideo(host: HTMLElement) {
     video.addEventListener('timeupdate', () => {
       if (video === players[front] && !switching && video.currentTime >= end - fade) crossfade();
     });
-    video.src = src;
+    video.src = source();
     host.append(video);
     players.push(video);
     return video;
@@ -220,6 +251,18 @@ function initLoopVideo(host: HTMLElement) {
     first.addEventListener('canplaythrough', () => addPlayer(), { once: true });
     sync();
   };
+
+  wide?.addEventListener('change', () => {
+    if (!players.length) return;
+    players.splice(0).forEach((video) => {
+      video.removeAttribute('src');
+      video.load();
+      video.remove();
+    });
+    front = 0;
+    switching = false;
+    setup();
+  });
 
   document.addEventListener('visibilitychange', sync);
   const preload = new IntersectionObserver(
@@ -244,6 +287,10 @@ function initLoopVideos() {
 }
 
 initNav();
+initMenu();
+if (import.meta.env.VITE_GA4_ID || import.meta.env.VITE_META_PIXEL_ID) {
+  void import('./consent.ts').then(({ initConsent }) => initConsent());
+}
 initReveal();
 initClock();
 initHeroVideo();

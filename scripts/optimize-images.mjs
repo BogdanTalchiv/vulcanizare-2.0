@@ -12,6 +12,10 @@ const posters = [
   { video: 'public/video/backgrounddesktop.mp4', name: 'hero-poster-desktop', widths: [960, 1440, 1920] },
   { video: 'public/video/backgroundmobile.mp4', name: 'hero-poster-mobile', widths: [480, 720] },
   { video: 'public/video/videoservicii.mp4', name: 'servicii-poster', widths: [480, 720], at: 0.5 },
+  { video: 'public/video/downvideodesktop.mp4', name: 'contact-poster-desktop', widths: [640, 960] },
+  { video: 'public/video/downvideomobile.mp4', name: 'contact-poster-mobile', widths: [480, 600] },
+  { video: 'public/video/servicedesktop.mp4', name: 'autoservice-poster-desktop', widths: [960, 1280] },
+  { video: 'public/video/servicemobile.mp4', name: 'autoservice-poster-mobile', widths: [540] },
 ];
 
 await mkdir(OUT, { recursive: true });

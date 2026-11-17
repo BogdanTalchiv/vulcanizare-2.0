@@ -1,6 +1,6 @@
 import type { IconName } from './business.ts';
 
-type AnyIcon = IconName | 'mail' | 'arrow' | 'route' | 'pause' | 'play';
+type AnyIcon = IconName | 'mail' | 'arrow' | 'route' | 'pause' | 'play' | 'menu' | 'close';
 
 const paths: Record<AnyIcon, string> = {
   phone:
@@ -13,6 +13,8 @@ const paths: Record<AnyIcon, string> = {
   route: '<path d="M20.5 3.5 3.5 10.8l7 2.7 2.7 7z"/>',
   pause: '<path d="M9 6v12M15 6v12"/>',
   play: '<path d="M8 5.6v12.8L18.4 12z"/>',
+  menu: '<path d="M4 8h16M4 16h16"/>',
+  close: '<path d="m6 6 12 12M18 6 6 18"/>',
   puncture:
     '<circle cx="12" cy="12" r="8.8"/><circle cx="12" cy="12" r="4.4"/><path d="m14.8 9.2 4.6-4.6M17.6 3l3.4 3.4"/>',
   tire: '<circle cx="12" cy="12" r="8.8"/><circle cx="12" cy="12" r="4.4"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7"/>',

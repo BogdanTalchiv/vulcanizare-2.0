@@ -1,6 +1,16 @@
+import { resolve } from 'node:path';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { autoService } from './src/data/business.ts';
+import { consentServices, readConsentEnv, type ConsentService } from './src/data/consent.ts';
 import {
+  normalizeSiteUrl,
+  pagePublicPath,
+  privacyStructuredData,
+  renderAutoService,
+  renderConsentUi,
+  renderCookieTable,
   renderDial,
+  renderFooter,
   renderServices,
   replacePhotos,
   replaceTokens,
@@ -10,21 +20,34 @@ import {
   structuredData,
 } from './src/build/render.ts';
 
-function forcecarSite(siteUrl?: string): Plugin {
+function forcecarSite(siteUrl: string | undefined, services: ConsentService[]): Plugin {
   return {
     name: 'forcecar-site',
     transformIndexHtml: {
       order: 'pre',
-      handler(html) {
-        const services = renderServices();
-        return replaceTokens(
-          replacePhotos(html)
-            .replace('<!--@seo-->', seoHead(siteUrl))
-            .replace('<!--@jsonld-->', structuredData(siteUrl))
-            .replace('<!--@services-note-->', services.note)
-            .replace('<!--@services-->', services.cards)
-            .replace('<!--@dial-->', renderDial()),
-        );
+      handler(html, ctx) {
+        const path = pagePublicPath(ctx.path);
+        const page = replacePhotos(html)
+          .replace('<!--@seo-->', () => seoHead(siteUrl, path))
+          .replace('<!--@footer-->', () => renderFooter(services))
+          .replace('<!--@consent-->', () => renderConsentUi(services))
+          .replace('<!--@cookie-table-->', () => renderCookieTable(services));
+
+        if (page.includes('<!--@services-->')) {
+          const offer = renderServices();
+          const auto = renderAutoService();
+          return replaceTokens(
+            page
+              .replace('<!--@jsonld-->', () => structuredData(siteUrl))
+              .replace('<!--@services-note-->', () => offer.note)
+              .replace('<!--@services-->', () => offer.cards)
+              .replace('<!--@autoservice-list-->', () => auto.list)
+              .replace('<!--@autoservice-cta-->', () => auto.cta)
+              .replace('<!--@dial-->', () => renderDial()),
+          );
+        }
+
+        return replaceTokens(page.replace('<!--@jsonld-->', () => (path === '/confidentialitate/' ? privacyStructuredData(siteUrl) : '')));
       },
     },
     generateBundle() {
@@ -32,14 +55,18 @@ function forcecarSite(siteUrl?: string): Plugin {
       if (siteUrl) {
         this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml(siteUrl) });
       } else {
-        this.warn('SITE_URL is not set: canonical URL, og:image and sitemap.xml were skipped.');
+        this.warn('SITE_URL is not set: canonical URL, og:image and sitemap.xml were skipped. Set SITE_URL=https://your-domain.md in .env before production deploy.');
+      }
+      if (!autoService.url) {
+        this.warn('autoService.url is empty: the Service auto button is shown as "În curând".');
       }
     },
   };
 }
 
-/** Inlines the single page stylesheet and preloads the hero headline font. */
+/** Inlines the shared stylesheet into every page and preloads the headline font. */
 function criticalAssetsPlugin(): Plugin {
+  const inlined = new Set<string>();
   return {
     name: 'forcecar-critical-assets',
     apply: 'build',
@@ -54,7 +81,7 @@ function criticalAssetsPlugin(): Plugin {
           const link = new RegExp(`<link rel="stylesheet"[^>]*href="/${fileName}"[^>]*>`);
           if (!link.test(output)) continue;
           output = output.replace(link, () => `<style>${String(asset.source)}</style>`);
-          delete bundle[fileName];
+          inlined.add(fileName);
         }
         const font = Object.keys(bundle).find((name) => /barlow-condensed-latin-700-normal.*\.woff2$/.test(name));
         if (!font) return output;
@@ -70,18 +97,29 @@ function criticalAssetsPlugin(): Plugin {
         };
       },
     },
+    generateBundle(_, bundle) {
+      for (const fileName of inlined) delete bundle[fileName];
+    },
   };
 }
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const siteUrl = env.SITE_URL?.replace(/\/+$/, '') || undefined;
+  const siteUrl = normalizeSiteUrl(env.SITE_URL);
+  const services = consentServices(readConsentEnv(env));
   return {
-    plugins: [forcecarSite(siteUrl), criticalAssetsPlugin()],
+    plugins: [forcecarSite(siteUrl, services), criticalAssetsPlugin()],
     build: {
       target: 'es2020',
       cssMinify: true,
       assetsInlineLimit: 0,
+      rollupOptions: {
+        input: {
+          main: resolve(import.meta.dirname, 'index.html'),
+          privacy: resolve(import.meta.dirname, 'confidentialitate/index.html'),
+          notFound: resolve(import.meta.dirname, '404.html'),
+        },
+      },
     },
   };
 });

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ro" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Confidențialitate și cookie-uri | ForceCar</title>
+    <meta
+      name="description"
+      content="Cum tratează ForceCar datele tale: ce informații primim când ne contactezi, ce cookie-uri folosește site-ul și ce drepturi ai."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0B0D10" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="author" content="{{name}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ro_MD" />
+    <meta property="og:site_name" content="{{name}}" />
+    <meta property="og:title" content="Confidențialitate și cookie-uri | ForceCar" />
+    <meta
+      property="og:description"
+      content="Cum tratează ForceCar datele tale: contact, cookie-uri și drepturile tale."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Confidențialitate și cookie-uri | ForceCar" />
+    <meta
+      name="twitter:description"
+      content="Cum tratează ForceCar datele tale: contact, cookie-uri și drepturile tale."
+    />
+    <!--@seo-->
+    <!--@jsonld-->
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="/src/page.ts"></script>
+  </head>
+  <body class="page">
+    <a class="skip-link" href="#main">Sari la conținut</a>
+
+    <header class="nav is-compact">
+      <div class="nav__inner container">
+        <a class="brand" href="/" aria-label="ForceCar — pagina principală">
+          <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <circle cx="32" cy="32" r="19" fill="none" stroke="currentColor" stroke-width="6" />
+            <path d="M32 13a19 19 0 0 1 19 19" fill="none" stroke="var(--accent)" stroke-width="6" />
+            <circle cx="32" cy="32" r="5" fill="var(--accent)" />
+          </svg>
+          <span class="brand__word">Force<span>Car</span></span>
+        </a>
+        <div class="nav__actions">
+          <a class="nav__phone" href="{{phone.href}}">{{phone.display}}</a>
+          <a class="btn btn--primary btn--sm nav__call" href="{{phone.href}}">{{icon:phone}}<span>Sună acum</span></a>
+          <a class="icon-btn nav__wa" href="{{links.whatsapp}}" target="_blank" rel="noopener noreferrer">
+            {{icon:chat}}<span class="sr-only">Scrie-ne pe WhatsApp</span>{{newtab}}
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="legal">
+      <div class="container legal__inner">
+        <nav class="breadcrumbs" aria-label="Navigare">
+          <ol>
+            <li><a href="/">Acasă</a></li>
+            <li aria-current="page">Confidențialitate</li>
+          </ol>
+        </nav>
+        <p class="section-index"><span>—</span>Informații legale</p>
+        <h1 class="display legal__title">Confidențialitate și cookie-uri<span class="accent-text">.</span></h1>
+        <p class="legal__updated">Ultima actualizare: <time datetime="2026-11-17">17 noiembrie 2026</time></p>
+
+        <section class="legal__section" aria-labelledby="cine">
+          <h2 id="cine">Cine suntem</h2>
+          <p>
+            Site-ul este al <strong>{{name}}</strong>, vulcanizare și service auto din {{address.full}}. Pentru orice
+            întrebare despre datele tale ne poți scrie la <a href="{{email.href}}">{{email.address}}</a> sau suna la
+            <a href="{{phone.href}}">{{phone.display}}</a>.
+          </p>
+        </section>
+
+        <section class="legal__section" aria-labelledby="date">
+          <h2 id="date">Ce date primim</h2>
+          <p>
+            Site-ul nu are formulare, conturi sau newsletter, deci nu colectează direct date personale. Primim date doar
+            atunci când alegi tu să ne contactezi:
+          </p>
+          <ul>
+            <li><strong>Telefon:</strong> numărul tău apare la noi când ne suni.</li>
+            <li><strong>WhatsApp:</strong> numărul și mesajele tale, prin serviciul WhatsApp (Meta).</li>
+            <li><strong>Email:</strong> adresa ta și conținutul mesajului.</li>
+          </ul>
+          <p>
+            Folosim aceste date doar ca să îți răspundem și să te ajutăm cu mașina, și nu le vindem nimănui. Le păstrăm
+            cât timp sunt necesare pentru a-ți răspunde sau cât cere legea.
+          </p>
+        </section>
+
+        <section class="legal__section" aria-labelledby="externe">
+          <h2 id="externe">Linkuri către alte servicii</h2>
+          <p>
+            Butoanele de traseu deschid Google Maps, iar cele de mesaj deschid WhatsApp. Abia când le apeși, aceste
+            servicii își aplică propriile reguli de confidențialitate:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google{{newtab}}</a>,
+            <a href="https://www.whatsapp.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">WhatsApp{{newtab}}</a>.
+          </p>
+          <p>
+            La fel ca orice site, serverul pe care este găzduit poate înregistra automat date tehnice (adresa IP, tipul
+            browserului, ora accesării), pentru securitate și funcționare.
+          </p>
+        </section>
+
+        <section class="legal__section" id="cookie-uri" aria-labelledby="cookie-uri-title">
+          <h2 id="cookie-uri-title">Cookie-uri</h2>
+          <!--@cookie-table-->
+        </section>
+
+        <section class="legal__section" aria-labelledby="drepturi">
+          <h2 id="drepturi">Drepturile tale</h2>
+          <p>
+            Ai dreptul să afli ce date avem despre tine, să ceri corectarea sau ștergerea lor și să te opui folosirii
+            lor. Scrie-ne la <a href="{{email.href}}">{{email.address}}</a>.
+          </p>
+          <p>
+            Dacă ești nemulțumit, te poți adresa Centrului Național pentru Protecția Datelor cu Caracter Personal al
+            Republicii Moldova sau, dacă locuiești în Uniunea Europeană, autorității de protecție a datelor din țara ta.
+          </p>
+        </section>
+
+        <p class="legal__back"><a class="btn btn--ghost" href="/">Înapoi la pagina principală</a></p>
+      </div>
+    </main>
+
+    <!--@footer-->
+
+    <nav class="mobilebar" aria-label="Contact rapid">
+      <a class="mobilebar__btn mobilebar__btn--call" href="{{phone.href}}">{{icon:phone}}<span>Sună acum</span></a>
+      <a class="mobilebar__btn" href="{{links.maps}}" target="_blank" rel="noopener noreferrer">
+        {{icon:route}}<span>Traseu</span>{{newtab}}
+      </a>
+    </nav>
+
+    <!--@consent-->
+  </body>
+</html>

@@ -31,6 +31,22 @@ export const business = {
   },
 } as const;
 
+/**
+ * Service auto section. Set `url` to the full website address (https://…) to turn the
+ * placeholder into a live button; hours are intentionally not published until confirmed.
+ */
+export const autoService = {
+  url: '',
+  services: [
+    'Diagnosticare computerizată',
+    'Electrică auto',
+    'Frâne',
+    'Suspensie și direcție',
+    'Schimb ulei și filtre',
+    'Reparații motor',
+  ],
+};
+
 export type IconName = 'puncture' | 'tire' | 'balance' | 'gauge' | 'stack' | 'rim' | 'phone' | 'pin' | 'chat' | 'clock';
 
 export interface ServiceItem {

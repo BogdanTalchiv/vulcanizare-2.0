@@ -6,14 +6,15 @@
     <title>Vulcanizare 24/7 Chișinău | ForceCar – Ismail 103</title>
     <meta
       name="description"
-      content="Vulcanizare NON-STOP în Chișinău, str. Ismail 103. ForceCar este disponibil 24/7 pentru servicii de vulcanizare auto. Sună: +373 79 535 005."
+      content="Vulcanizare non-stop 24/7 în Chișinău, str. Ismail 103: schimb anvelope, echilibrare roți, reparare pene și jante — deschis ziua și noaptea. Service auto. Sună: +373 79 535 005."
     />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#0B0D10" />
     <meta name="color-scheme" content="dark" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="geo.region" content="MD-CU" />
     <meta name="geo.placename" content="{{address.city}}" />
+    <meta name="author" content="{{name}}" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ro_MD" />
@@ -21,13 +22,13 @@
     <meta property="og:title" content="Vulcanizare 24/7 Chișinău | ForceCar – Ismail 103" />
     <meta
       property="og:description"
-      content="Vulcanizare NON-STOP pe str. Ismail 103, Chișinău. Sună oricând: +373 79 535 005."
+      content="Vulcanizare non-stop pe str. Ismail 103, Chișinău — deschis 24/7. Schimb anvelope, echilibrare, pene și jante. Sună: +373 79 535 005."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Vulcanizare 24/7 Chișinău | ForceCar – Ismail 103" />
     <meta
       name="twitter:description"
-      content="Vulcanizare NON-STOP pe str. Ismail 103, Chișinău. Sună oricând: +373 79 535 005."
+      content="Vulcanizare non-stop pe str. Ismail 103, Chișinău — deschis 24/7. Schimb anvelope, echilibrare, pene și jante. Sună: +373 79 535 005."
     />
     <!--@seo-->
 
@@ -69,10 +70,11 @@
           <span class="brand__word">Force<span>Car</span></span>
         </a>
 
-        <p class="status status--compact"><span class="status__dot" aria-hidden="true"></span><span><span class="status__long">Deschis </span>24/7</span></p>
+        <p class="status status--compact"><span class="status__dot" aria-hidden="true"></span><span><span class="status__long">Vulcanizare </span>24/7</span></p>
 
-        <nav class="nav__links" aria-label="Secțiuni">
+        <nav class="nav__links" id="nav-menu" aria-label="Secțiuni">
           <a href="#serviciu">Serviciu</a>
+          <a href="#service-auto">Service auto</a>
           <a href="#non-stop">Non-stop</a>
           <a href="#contact">Contact</a>
         </nav>
@@ -85,6 +87,10 @@
           <a class="icon-btn nav__wa" href="{{links.whatsapp}}" target="_blank" rel="noopener noreferrer">
             {{icon:chat}}<span class="sr-only">Scrie-ne pe WhatsApp</span>{{newtab}}
           </a>
+          <button class="icon-btn nav__menu" type="button" aria-expanded="false" aria-controls="nav-menu" data-menu-toggle hidden>
+            <span class="nav__menu-open">{{icon:menu}}</span><span class="nav__menu-close">{{icon:close}}</span>
+            <span class="sr-only" data-menu-label>Deschide meniul</span>
+          </button>
         </div>
       </div>
     </header>
@@ -159,7 +165,7 @@
         <div class="hero__rails container" aria-hidden="true"><span></span><span></span><span></span></div>
 
         <div class="hero__content container">
-          <p class="eyebrow hero__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>ForceCar — 24/7</p>
+          <p class="eyebrow hero__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>ForceCar — {{address.city}}</p>
 
           <h1 class="hero__title" id="hero-title">
             <span class="line"><span>Vulcanizare</span></span>
@@ -405,11 +411,85 @@
         </div>
       </section>
 
-      <!-- 03 — Non-stop -->
+      <!-- 03 — Service auto -->
+      <section class="section autoservice" id="service-auto" aria-labelledby="autoservice-title">
+        <div class="container">
+          <div class="autoservice__box" data-reveal>
+            <div class="autoservice__media" aria-hidden="true">
+              <picture>
+                <source
+                  media="(min-width: 900px)"
+                  type="image/avif"
+                  srcset="/img/autoservice-poster-desktop-960.avif 960w, /img/autoservice-poster-desktop-1280.avif 1280w"
+                  sizes="92vw"
+                />
+                <source
+                  media="(min-width: 900px)"
+                  type="image/webp"
+                  srcset="/img/autoservice-poster-desktop-960.webp 960w, /img/autoservice-poster-desktop-1280.webp 1280w"
+                  sizes="92vw"
+                />
+                <source
+                  media="(min-width: 900px)"
+                  srcset="/img/autoservice-poster-desktop-960.jpg 960w, /img/autoservice-poster-desktop-1280.jpg 1280w"
+                  sizes="92vw"
+                />
+                <source type="image/avif" srcset="/img/autoservice-poster-mobile-540.avif 540w" sizes="100vw" />
+                <source type="image/webp" srcset="/img/autoservice-poster-mobile-540.webp 540w" sizes="100vw" />
+                <img
+                  src="/img/autoservice-poster-mobile-540.jpg"
+                  width="540"
+                  height="960"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div
+                class="loop-video"
+                data-loop-video
+                data-src="/video/servicemobile.mp4"
+                data-src-desktop="/video/servicedesktop.mp4"
+                data-media="(min-width: 900px)"
+                data-start="0"
+                data-end="9.9"
+              ></div>
+              <span class="autoservice__scan"></span>
+            </div>
+
+            <div class="autoservice__content">
+              <p class="section-index" data-reveal><span>03</span>Service auto</p>
+              <h2 class="display section-title autoservice__title" id="autoservice-title" data-reveal="lines">
+                <span class="line"><span>Mai mult decât</span></span>
+                <span class="line"><span>roți<span class="accent-text">.</span></span></span>
+              </h2>
+              <p class="autoservice__lead" data-reveal>
+                Pe lângă vulcanizare, ForceCar are și service auto — de la diagnosticare computerizată până la reparații
+                de motor.
+              </p>
+
+              <ul class="autoservice__list" role="list" aria-label="Lucrări service auto">
+                <!--@autoservice-list-->
+              </ul>
+
+              <div class="autoservice__actions" data-reveal>
+                <!--@autoservice-cta-->
+              </div>
+
+              <p class="autoservice__note" data-reveal>
+                {{icon:clock}}
+                <span>Programul non-stop 24/7 se aplică doar vulcanizării.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 — Non-stop -->
       <section class="section nonstop" id="non-stop" aria-labelledby="nonstop-title">
         <div class="container nonstop__layout">
           <header class="section-head nonstop__head">
-            <p class="section-index" data-reveal><span>03</span>Program</p>
+            <p class="section-index" data-reveal><span>04</span>Program</p>
             <h2 class="display section-title" id="nonstop-title" data-reveal="lines">
               <span class="line"><span>Nu există</span></span>
               <span class="line"><span>oră nepotrivită.</span></span>
@@ -451,28 +531,68 @@
         </div>
       </section>
 
-      <!-- 04 — Contact -->
+      <!-- 05 — Contact -->
       <section class="section contact" id="contact" aria-labelledby="contact-title">
         <div class="contact__glow" aria-hidden="true"></div>
         <div class="container">
           <header class="section-head contact__head">
-            <p class="section-index" data-reveal><span>04</span>Contact</p>
+            <p class="section-index" data-reveal><span>05</span>Contact</p>
             <h2 class="display section-title" id="contact-title" data-reveal="lines">
               <span class="line"><span>Ai nevoie de noi?</span></span>
             </h2>
-            <p class="contact__kicker" data-reveal>ForceCar este aici. <span class="accent-text">24/7.</span></p>
+            <p class="contact__kicker" data-reveal>Vulcanizarea ForceCar este aici. <span class="accent-text">24/7.</span></p>
           </header>
 
           <a class="bigphone" href="{{phone.href}}" data-reveal>
             <span class="bigphone__icon">{{icon:phone}}</span>
             <span class="bigphone__num"><span class="sr-only">Sună la ForceCar: </span><span class="bigphone__cc">{{phone.countryCode}}</span> {{phone.local}}</span>
-            <span class="bigphone__hint" aria-hidden="true">Apasă pentru a suna — oricând</span>
+            <span class="bigphone__hint" aria-hidden="true">Apasă pentru a suna — vulcanizare non-stop</span>
           </a>
 
           <div class="contact__layout">
-            <figure class="photo contact__photo" data-reveal="photo">
-              <!--@photo:atelier-noapte-->
-              <figcaption class="photo__caption"><span>Noaptea</span> Caută indicatorul VULCANIZARE</figcaption>
+            <figure class="photo contact__photo contact__photo--video" data-reveal="photo">
+              <picture>
+                <source
+                  media="(min-width: 900px)"
+                  type="image/avif"
+                  srcset="/img/contact-poster-desktop-640.avif 640w, /img/contact-poster-desktop-960.avif 960w"
+                  sizes="52vw"
+                />
+                <source
+                  media="(min-width: 900px)"
+                  type="image/webp"
+                  srcset="/img/contact-poster-desktop-640.webp 640w, /img/contact-poster-desktop-960.webp 960w"
+                  sizes="52vw"
+                />
+                <source
+                  media="(min-width: 900px)"
+                  srcset="/img/contact-poster-desktop-640.jpg 640w, /img/contact-poster-desktop-960.jpg 960w"
+                  sizes="52vw"
+                />
+                <source type="image/avif" srcset="/img/contact-poster-mobile-480.avif 480w, /img/contact-poster-mobile-600.avif 600w" sizes="100vw" />
+                <source type="image/webp" srcset="/img/contact-poster-mobile-480.webp 480w, /img/contact-poster-mobile-600.webp 600w" sizes="100vw" />
+                <img
+                  src="/img/contact-poster-mobile-600.jpg"
+                  srcset="/img/contact-poster-mobile-480.jpg 480w, /img/contact-poster-mobile-600.jpg 600w"
+                  sizes="100vw"
+                  width="600"
+                  height="750"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div
+                class="loop-video"
+                aria-hidden="true"
+                data-loop-video
+                data-src="/video/downvideomobile.mp4"
+                data-src-desktop="/video/downvideodesktop.mp4"
+                data-media="(min-width: 900px)"
+                data-start="0"
+                data-end="19.9"
+              ></div>
+              <figcaption class="photo__caption"><span>Atelier</span> Montaj și echilibrare roți</figcaption>
             </figure>
 
           <div class="contact__grid">
@@ -507,17 +627,7 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="container footer__inner">
-        <p class="footer__brand"><strong>ForceCar</strong> <span aria-hidden="true">|</span> Vulcanizare 24/7</p>
-        <ul class="footer__list" role="list">
-          <li><a href="{{phone.href}}">{{phone.display}}</a></li>
-          <li><a href="{{links.maps}}" target="_blank" rel="noopener noreferrer">{{address.short}}{{newtab}}</a></li>
-          <li><a href="{{email.href}}">{{email.address}}</a></li>
-        </ul>
-        <p class="footer__copy">© {{year}} ForceCar</p>
-      </div>
-    </footer>
+    <!--@footer-->
 
     <nav class="mobilebar" aria-label="Contact rapid">
       <a class="mobilebar__btn mobilebar__btn--call" href="{{phone.href}}">{{icon:phone}}<span>Sună acum</span></a>
@@ -525,5 +635,7 @@
         {{icon:route}}<span>Traseu</span>{{newtab}}
       </a>
     </nav>
+
+    <!--@consent-->
   </body>
 </html>
