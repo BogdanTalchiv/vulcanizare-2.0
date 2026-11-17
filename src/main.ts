@@ -129,7 +129,123 @@ function initHeroVideo() {
   else window.addEventListener('load', start, { once: true });
 }
 
+function initRepair() {
+  const scene = document.querySelector<HTMLElement>('[data-repair]');
+  const toggle = scene?.querySelector<HTMLButtonElement>('[data-repair-toggle]');
+  const label = toggle?.querySelector<HTMLElement>('[data-repair-toggle-label]');
+  if (!scene || !toggle || !label || reducedMotion.matches) return;
+
+  scene.classList.add('is-idle');
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => scene.classList.toggle('is-idle', !entry.isIntersecting), {
+      threshold: 0.2,
+    }).observe(scene);
+  } else {
+    scene.classList.remove('is-idle');
+  }
+
+  toggle.hidden = false;
+  toggle.addEventListener('click', () => {
+    const paused = scene.classList.toggle('is-paused');
+    label.textContent = paused ? 'Pornește animația' : 'Oprește animația';
+  });
+}
+
+/** Seamless loop: two players crossfade so the clip's black fade-in/out never shows. */
+function initLoopVideo(host: HTMLElement) {
+  const src = host.dataset.src ?? '';
+  const start = Number(host.dataset.start ?? 0);
+  const end = Number(host.dataset.end ?? 0);
+  const fade = 0.7;
+  const players: HTMLVideoElement[] = [];
+  let front = 0;
+  let inView = false;
+  let switching = false;
+
+  const cue = (video: HTMLVideoElement) => {
+    if (Math.abs(video.currentTime - start) > 0.05) video.currentTime = start;
+  };
+
+  const sync = () => {
+    const current = players[front];
+    if (!current) return;
+    if (inView && !document.hidden) current.play().catch(() => undefined);
+    else current.pause();
+  };
+
+  const crossfade = () => {
+    const current = players[front];
+    const next = players[1 - front];
+    if (!next || next.readyState < 2) {
+      current.currentTime = start;
+      return;
+    }
+    switching = true;
+    next.play().catch(() => undefined);
+    next.classList.add('is-front');
+    current.classList.remove('is-front');
+    front = 1 - front;
+
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      current.pause();
+      cue(current);
+      switching = false;
+    };
+    current.addEventListener('transitionend', settle, { once: true });
+    window.setTimeout(settle, fade * 2000);
+  };
+
+  const addPlayer = () => {
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.tabIndex = -1;
+    video.addEventListener('loadedmetadata', () => cue(video), { once: true });
+    video.addEventListener('timeupdate', () => {
+      if (video === players[front] && !switching && video.currentTime >= end - fade) crossfade();
+    });
+    video.src = src;
+    host.append(video);
+    players.push(video);
+    return video;
+  };
+
+  const setup = () => {
+    const first = addPlayer();
+    first.addEventListener('playing', () => first.classList.add('is-front'), { once: true });
+    first.addEventListener('canplaythrough', () => addPlayer(), { once: true });
+    sync();
+  };
+
+  document.addEventListener('visibilitychange', sync);
+  const preload = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return;
+      preload.disconnect();
+      setup();
+    },
+    { rootMargin: '300px 0px' },
+  );
+  preload.observe(host);
+  new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    sync();
+  }).observe(host);
+}
+
+function initLoopVideos() {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (reducedMotion.matches || connection?.saveData || !('IntersectionObserver' in window)) return;
+  document.querySelectorAll<HTMLElement>('[data-loop-video]').forEach(initLoopVideo);
+}
+
 initNav();
 initReveal();
 initClock();
 initHeroVideo();
+initRepair();
+initLoopVideos();

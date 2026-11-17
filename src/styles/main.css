@@ -684,6 +684,10 @@ strong {
   top: calc(var(--nav-h) + 16px);
   right: var(--gutter);
   z-index: 2;
+}
+
+.hero__toggle,
+.repair__toggle {
   display: grid;
   place-items: center;
   width: 44px;
@@ -699,26 +703,32 @@ strong {
     color 0.3s;
 }
 
-.hero__toggle[hidden] {
+.hero__toggle[hidden],
+.repair__toggle[hidden] {
   display: none;
 }
 
-.hero__toggle:hover {
+.hero__toggle:hover,
+.repair__toggle:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
 
-.hero__toggle .icon {
+.hero__toggle .icon,
+.repair__toggle .icon {
   width: 18px;
   height: 18px;
 }
 
 .hero__toggle-play,
-.hero__toggle.is-paused .hero__toggle-pause {
+.hero__toggle.is-paused .hero__toggle-pause,
+.repair__toggle-play,
+.repair.is-paused .repair__toggle-pause {
   display: none;
 }
 
-.hero__toggle.is-paused .hero__toggle-play {
+.hero__toggle.is-paused .hero__toggle-play,
+.repair.is-paused .repair__toggle-play {
   display: contents;
 }
 
@@ -996,8 +1006,8 @@ strong {
 
   .hero__media::after {
     background:
-      linear-gradient(0deg, var(--bg) 2%, rgb(11 13 16 / 0.78) 34%, rgb(11 13 16 / 0.3) 66%, rgb(11 13 16 / 0.65) 100%),
-      linear-gradient(90deg, rgb(11 13 16 / 0.45) 0%, rgb(11 13 16 / 0) 60%);
+      linear-gradient(0deg, var(--bg) 2%, rgb(11 13 16 / 0.78) 38%, rgb(11 13 16 / 0.12) 72%, rgb(11 13 16 / 0.5) 100%),
+      linear-gradient(90deg, rgb(11 13 16 / 0.35) 0%, rgb(11 13 16 / 0) 60%);
   }
 
   .hero__rails span:nth-child(2) {
@@ -1202,7 +1212,7 @@ strong {
   background: var(--line-strong);
 }
 
-.js [data-reveal='photo'] {
+.js [data-reveal='photo'] > :is(picture, .loop-video) {
   clip-path: inset(100% 0 0 0);
   transition: clip-path 1.3s var(--ease-io);
 }
@@ -1211,8 +1221,17 @@ strong {
   transform: scale(1.14);
 }
 
-.js [data-reveal='photo'].is-in {
+.js [data-reveal='photo'].is-in > :is(picture, .loop-video) {
   clip-path: inset(0);
+}
+
+.js [data-reveal='photo'] .photo__caption {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-out) 0.7s;
+}
+
+.js [data-reveal='photo'].is-in .photo__caption {
+  opacity: 1;
 }
 
 .js [data-reveal='photo'].is-in img {
@@ -1245,6 +1264,37 @@ strong {
   object-position: 50% 62%;
 }
 
+.loop-video {
+  position: absolute;
+  inset: 0;
+}
+
+.loop-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s linear;
+}
+
+.loop-video video.is-front {
+  opacity: 1;
+}
+
+.services__photo--video img,
+.services__photo--video video {
+  object-position: 50% 50%;
+  filter: saturate(0.8) brightness(0.86) contrast(1.08);
+}
+
+@media (max-width: 599px) {
+  .services__photo--video {
+    aspect-ratio: 4 / 5;
+  }
+}
+
 @media (min-width: 600px) {
   .services__photo {
     aspect-ratio: 16 / 9;
@@ -1267,6 +1317,467 @@ strong {
 
   .services__layout .card {
     min-height: 250px;
+  }
+}
+
+/* ---------- Repair sequence: demontare → reparație jantă → montaj ---------- */
+
+.repair {
+  --cycle: 12s;
+  --ease-move: cubic-bezier(0.65, 0, 0.25, 1);
+  position: relative;
+  display: grid;
+  grid-template-areas: 'scene' 'copy' 'steps';
+  margin-top: clamp(16px, 2vw, 24px);
+  padding: clamp(20px, 3vw, 40px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background:
+    radial-gradient(ellipse 70% 80% at 62% 45%, rgb(255 90 36 / 0.07), transparent 70%),
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 48px 48px,
+    #0e1014;
+  background-blend-mode: normal, soft-light, soft-light, normal;
+}
+
+.repair__scene {
+  grid-area: scene;
+  margin-inline: clamp(-12px, -1vw, 0px);
+}
+
+.repair__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.repair__copy {
+  grid-area: copy;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 8px 28px;
+}
+
+.repair__eyebrow {
+  margin-bottom: 18px;
+}
+
+.repair__stages {
+  display: grid;
+}
+
+.repair__stage {
+  grid-area: 1 / 1;
+  opacity: 0;
+  animation: rp-stage var(--cycle) var(--ease-out) calc(var(--i) * var(--cycle) / 3) infinite backwards;
+}
+
+.repair__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.3rem, 4.2vw, 4.2rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.repair__text {
+  max-width: 36ch;
+  margin-top: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.repair__steps {
+  grid-area: steps;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line-strong);
+}
+
+.repair__steps li {
+  position: relative;
+  padding: 14px 10px 0 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: rp-step-label var(--cycle) linear calc(var(--i) * var(--cycle) / 3) infinite;
+}
+
+.repair__steps li span {
+  margin-right: 6px;
+}
+
+.repair__steps li::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: rp-step-bar var(--cycle) linear calc(var(--i) * var(--cycle) / 3) infinite;
+}
+
+.repair__toggle {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+}
+
+.repair__rim {
+  animation: rp-rim var(--cycle) var(--ease-move) infinite;
+}
+
+.repair__tire {
+  animation: rp-tire var(--cycle) var(--ease-move) infinite;
+}
+
+.repair__wheel {
+  transform-box: view-box;
+  transform-origin: 320px 200px;
+  animation: rp-spin var(--cycle) cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.repair__crack {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  animation: rp-crack var(--cycle) linear infinite;
+}
+
+.repair__seam {
+  fill: none;
+  stroke: #ff7a3d;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rp-seam var(--cycle) linear infinite;
+}
+
+.repair__torch {
+  opacity: 0;
+  animation: rp-torch var(--cycle) var(--ease-move) infinite;
+}
+
+.repair__hot {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rp-hot var(--cycle) linear infinite;
+}
+
+.repair__sparks {
+  opacity: 0;
+  animation: rp-sparks var(--cycle) linear infinite;
+}
+
+.repair__sparks path {
+  fill: none;
+  stroke: #ffd0a1;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 0.3 1;
+  stroke-dashoffset: 0.3;
+  animation: rp-spark 0.5s cubic-bezier(0.2, 0.6, 0.4, 1) var(--d) infinite;
+}
+
+.repair__sparks path:nth-child(even) {
+  stroke: var(--accent);
+}
+
+.repair__ambient {
+  opacity: 0.25;
+  animation: rp-ambient var(--cycle) ease-in-out infinite;
+}
+
+.repair__balance {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rp-balance var(--cycle) var(--ease-out) infinite;
+}
+
+.repair.is-idle *,
+.repair.is-idle *::before,
+.repair.is-paused *,
+.repair.is-paused *::before {
+  animation-play-state: paused;
+}
+
+@media (min-width: 900px) {
+  .repair {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: 'copy scene' 'steps steps';
+    column-gap: clamp(24px, 3vw, 48px);
+  }
+
+  .repair__copy {
+    padding-block: 0;
+  }
+
+  .repair__scene {
+    padding-block: 8px 24px;
+  }
+}
+
+@media (max-width: 899px) {
+  .repair__scene {
+    padding-top: 40px;
+  }
+}
+
+@media (max-width: 599px) {
+  .repair__steps li {
+    padding-right: 6px;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  .repair__steps li span {
+    display: block;
+    margin: 0 0 4px;
+  }
+}
+
+@keyframes rp-stage {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  4%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes rp-step-label {
+  0%,
+  33.33% {
+    color: var(--text);
+  }
+  34%,
+  100% {
+    color: var(--muted);
+  }
+}
+
+@keyframes rp-step-bar {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  33.33% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  37%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes rp-tire {
+  0%,
+  6% {
+    transform: none;
+  }
+  24%,
+  70% {
+    transform: translateX(-150px);
+  }
+  86%,
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rp-rim {
+  0%,
+  8% {
+    transform: none;
+  }
+  24%,
+  68% {
+    transform: translateX(40px);
+  }
+  82%,
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes rp-spin {
+  0%,
+  86% {
+    transform: rotate(0deg);
+  }
+  98%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rp-crack {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  44% {
+    opacity: 1;
+  }
+  54%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rp-seam {
+  0%,
+  40% {
+    stroke-dashoffset: 1;
+    stroke: #ffd2a8;
+    opacity: 1;
+  }
+  58% {
+    stroke-dashoffset: 0;
+    stroke: #ff7a3d;
+  }
+  76%,
+  94% {
+    stroke-dashoffset: 0;
+    stroke: #7d838d;
+    opacity: 0.8;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    stroke: #7d838d;
+    opacity: 0;
+  }
+}
+
+@keyframes rp-torch {
+  0%,
+  30% {
+    transform: translateX(90px);
+    opacity: 0;
+  }
+  38%,
+  59% {
+    transform: none;
+    opacity: 1;
+  }
+  67%,
+  100% {
+    transform: translateX(90px);
+    opacity: 0;
+  }
+}
+
+@keyframes rp-hot {
+  0%,
+  39% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  42%,
+  48% {
+    opacity: 1;
+    transform: none;
+  }
+  51% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+  55% {
+    opacity: 1;
+    transform: none;
+  }
+  61%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes rp-sparks {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  42%,
+  58% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rp-spark {
+  0% {
+    stroke-dashoffset: 0.3;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+
+@keyframes rp-ambient {
+  0%,
+  36% {
+    opacity: 0.25;
+  }
+  46%,
+  56% {
+    opacity: 0.85;
+  }
+  51% {
+    opacity: 0.55;
+  }
+  66%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes rp-balance {
+  0%,
+  92% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  95% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
   }
 }
 
@@ -2248,6 +2759,28 @@ strong {
   }
 
   .hero__sweep {
+    display: none;
+  }
+
+  .repair *,
+  .repair *::before {
+    animation-name: none !important;
+  }
+
+  .repair__stages {
+    gap: 24px;
+  }
+
+  .repair__stage {
+    grid-area: auto;
+    opacity: 1;
+  }
+
+  .repair__title {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+  }
+
+  .repair__steps {
     display: none;
   }
 }

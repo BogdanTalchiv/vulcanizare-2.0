@@ -220,14 +220,171 @@
           </header>
 
           <div class="services__layout">
-            <figure class="photo services__photo" data-reveal="photo">
-              <!--@photo:atelier-interior-->
-              <figcaption class="photo__caption"><span>Atelierul</span> {{address.short}}</figcaption>
+            <figure class="photo services__photo services__photo--video" data-reveal="photo">
+              <picture>
+                <source type="image/avif" srcset="/img/servicii-poster-480.avif 480w, /img/servicii-poster-720.avif 720w" sizes="(min-width: 1100px) 40vw, 100vw" />
+                <source type="image/webp" srcset="/img/servicii-poster-480.webp 480w, /img/servicii-poster-720.webp 720w" sizes="(min-width: 1100px) 40vw, 100vw" />
+                <img
+                  src="/img/servicii-poster-720.jpg"
+                  srcset="/img/servicii-poster-480.jpg 480w, /img/servicii-poster-720.jpg 720w"
+                  sizes="(min-width: 1100px) 40vw, 100vw"
+                  width="720"
+                  height="1280"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div
+                class="loop-video"
+                aria-hidden="true"
+                data-loop-video
+                data-src="/video/videoservicii.mp4"
+                data-start="0.5"
+                data-end="21.6"
+              ></div>
+              <figcaption class="photo__caption"><span>Jante</span> Grijă la fiecare detaliu</figcaption>
             </figure>
 
             <ul class="cards" role="list">
               <!--@services-->
             </ul>
+          </div>
+
+          <div class="repair" data-repair data-reveal>
+            <div class="repair__scene" aria-hidden="true">
+              <svg class="repair__svg" viewBox="0 0 640 400" focusable="false">
+                <defs>
+                  <radialGradient id="rp-glow">
+                    <stop offset="0%" stop-color="#ff5a24" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#ff5a24" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="rp-hot">
+                    <stop offset="0%" stop-color="#fff4e6" />
+                    <stop offset="30%" stop-color="#ffb37a" stop-opacity="0.9" />
+                    <stop offset="100%" stop-color="#ff5a24" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="rp-shadow">
+                    <stop offset="0%" stop-color="#000" stop-opacity="0.7" />
+                    <stop offset="100%" stop-color="#000" stop-opacity="0" />
+                  </radialGradient>
+                  <linearGradient id="rp-lip" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#e4e8ee" />
+                    <stop offset="45%" stop-color="#7c838e" />
+                    <stop offset="100%" stop-color="#2c3037" />
+                  </linearGradient>
+                  <linearGradient id="rp-spoke" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#5a616b" />
+                    <stop offset="50%" stop-color="#d3d8df" />
+                    <stop offset="100%" stop-color="#6b727d" />
+                  </linearGradient>
+                  <linearGradient id="rp-side" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#22252b" />
+                    <stop offset="100%" stop-color="#0d0f12" />
+                  </linearGradient>
+                  <path id="rp-spoke-shape" d="M-8 -30 L8 -30 L17 -97 L-17 -97 Z" />
+                </defs>
+
+                <circle class="repair__ambient" cx="320" cy="200" r="210" fill="url(#rp-glow)" />
+                <ellipse cx="320" cy="368" rx="170" ry="14" fill="url(#rp-shadow)" />
+
+                <g class="repair__wheel">
+                  <g class="repair__rim">
+                    <circle cx="320" cy="200" r="112" fill="url(#rp-lip)" />
+                    <circle cx="320" cy="200" r="101" fill="#121418" />
+                    <circle cx="320" cy="200" r="94" fill="none" stroke="#262a31" stroke-width="2" />
+                    <g transform="translate(320 200)" fill="url(#rp-spoke)">
+                      <use href="#rp-spoke-shape" />
+                      <use href="#rp-spoke-shape" transform="rotate(72)" />
+                      <use href="#rp-spoke-shape" transform="rotate(144)" />
+                      <use href="#rp-spoke-shape" transform="rotate(216)" />
+                      <use href="#rp-spoke-shape" transform="rotate(288)" />
+                    </g>
+                    <circle cx="320" cy="200" r="31" fill="#2a2e35" stroke="#59606a" stroke-width="2" />
+                    <g fill="#9aa1ab">
+                      <circle cx="320" cy="182" r="4" />
+                      <circle cx="337.1" cy="194.4" r="4" />
+                      <circle cx="330.6" cy="214.6" r="4" />
+                      <circle cx="309.4" cy="214.6" r="4" />
+                      <circle cx="302.9" cy="194.4" r="4" />
+                    </g>
+                    <circle cx="320" cy="200" r="8" fill="#16181c" />
+                    <circle cx="320" cy="200" r="3.2" fill="#ff5a24" />
+                    <path class="repair__crack" d="M396 128l7 7-6 5 8 7-5 4" />
+                    <path class="repair__seam" d="M383 120a102 102 0 0 1 32 42" pathLength="1" />
+                  </g>
+
+                  <g class="repair__tire">
+                    <circle cx="320" cy="200" r="138" fill="none" stroke="url(#rp-side)" stroke-width="44" />
+                    <circle cx="320" cy="200" r="155" fill="none" stroke="#1d2026" stroke-width="10" stroke-dasharray="8 5" />
+                    <circle cx="320" cy="200" r="160" fill="none" stroke="#353a42" stroke-width="1.5" />
+                    <circle cx="320" cy="200" r="117" fill="none" stroke="#353a42" stroke-width="1.5" />
+                    <circle cx="320" cy="200" r="128" fill="none" stroke="#2a2e35" stroke-width="1" />
+                    <path d="M222 120a128 128 0 0 1 40-36" fill="none" stroke="#ff5a24" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+                  </g>
+                </g>
+
+                <circle class="repair__balance" cx="320" cy="200" r="172" />
+
+                <g transform="translate(442 134)">
+                  <circle class="repair__hot" r="30" fill="url(#rp-hot)" />
+                </g>
+
+                <g class="repair__sparks" transform="translate(442 134)">
+                  <path d="M0 0L-58 -50" pathLength="1" style="--d: 0s" />
+                  <path d="M0 0L-72 -8" pathLength="1" style="--d: 0.12s" />
+                  <path d="M0 0L-50 46" pathLength="1" style="--d: 0.24s" />
+                  <path d="M0 0L-12 -68" pathLength="1" style="--d: 0.06s" />
+                  <path d="M0 0L-76 26" pathLength="1" style="--d: 0.18s" />
+                  <path d="M0 0L-26 64" pathLength="1" style="--d: 0.3s" />
+                  <path d="M0 0L-66 -34" pathLength="1" style="--d: 0.36s" />
+                  <path d="M0 0L-40 -62" pathLength="1" style="--d: 0.42s" />
+                  <path d="M0 0L30 -56" pathLength="1" style="--d: 0.09s" />
+                  <path d="M0 0L-64 50" pathLength="1" style="--d: 0.27s" />
+                  <path d="M0 0L18 60" pathLength="1" style="--d: 0.15s" />
+                  <path d="M0 0L-80 -20" pathLength="1" style="--d: 0.33s" />
+                </g>
+
+                <g transform="translate(442 134) rotate(-28)">
+                  <g class="repair__torch">
+                    <path d="M4 0h34" stroke="#a7adb6" stroke-width="3" stroke-linecap="round" />
+                    <path d="M38 -5l22 -4v18l-22 -4z" fill="#3a3f47" />
+                    <rect x="60" y="-13" width="92" height="26" rx="7" fill="#1b1e23" stroke="#3d424b" stroke-width="1.5" />
+                    <rect x="120" y="-14" width="13" height="28" rx="2" fill="#ff5a24" />
+                    <path d="M152 -4c30 0 42 -8 70 -8M152 4c30 0 46 6 74 10" fill="none" stroke="#3d424b" stroke-width="2.5" stroke-linecap="round" />
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            <div class="repair__copy">
+              <p class="eyebrow repair__eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span>Pas cu pas</p>
+              <ol class="repair__stages" role="list">
+                <li class="repair__stage" style="--i: 0">
+                  <h3 class="repair__title">Demontare anvelopă<span class="accent">.</span></h3>
+                  <p class="repair__text">Anvelopa este scoasă de pe jantă, pentru a putea verifica și repara roata.</p>
+                </li>
+                <li class="repair__stage" style="--i: 1">
+                  <h3 class="repair__title">Reparație jantă<span class="accent">.</span></h3>
+                  <p class="repair__text">Janta este îndreptată și sudată acolo unde este nevoie, în atelier.</p>
+                </li>
+                <li class="repair__stage" style="--i: 2">
+                  <h3 class="repair__title">Montaj final<span class="accent">.</span></h3>
+                  <p class="repair__text">Anvelopa revine pe jantă, iar roata este echilibrată pe stand.</p>
+                </li>
+              </ol>
+            </div>
+
+            <ol class="repair__steps" role="list" aria-hidden="true">
+              <li style="--i: 0"><span>01</span> Demontare</li>
+              <li style="--i: 1"><span>02</span> Reparație jantă</li>
+              <li style="--i: 2"><span>03</span> Montaj final</li>
+            </ol>
+
+            <button class="repair__toggle" type="button" data-repair-toggle hidden>
+              <span class="repair__toggle-pause">{{icon:pause}}</span><span class="repair__toggle-play">{{icon:play}}</span>
+              <span class="sr-only" data-repair-toggle-label>Oprește animația</span>
+            </button>
           </div>
 
           <div class="services__gallery">

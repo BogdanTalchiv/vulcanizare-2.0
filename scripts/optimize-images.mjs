@@ -7,18 +7,19 @@ import { gradePhoto, photos } from './grade-photos.mjs';
 
 const OUT = 'public/img';
 
-/** Posters are the first frame of each hero video, so the swap to video playback is seamless. */
+/** Each poster is the frame where its video starts playing, so the swap to playback is seamless. */
 const posters = [
   { video: 'public/video/backgrounddesktop.mp4', name: 'hero-poster-desktop', widths: [960, 1440, 1920] },
   { video: 'public/video/backgroundmobile.mp4', name: 'hero-poster-mobile', widths: [480, 720] },
+  { video: 'public/video/videoservicii.mp4', name: 'servicii-poster', widths: [480, 720], at: 0.5 },
 ];
 
 await mkdir(OUT, { recursive: true });
 
-async function firstFrame(video) {
+async function frameAt(video, at = 0) {
   const { stdout } = await promisify(execFile)(
     ffmpeg,
-    ['-loglevel', 'error', '-i', video, '-frames:v', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'],
+    ['-loglevel', 'error', '-ss', String(at), '-i', video, '-frames:v', '1', '-f', 'image2pipe', '-vcodec', 'png', '-'],
     { encoding: 'buffer', maxBuffer: 64 * 1024 * 1024 },
   );
   return stdout;
@@ -36,7 +37,7 @@ async function writeVariants(input, name, widths) {
 }
 
 for (const poster of posters) {
-  await writeVariants(await firstFrame(poster.video), poster.name, poster.widths);
+  await writeVariants(await frameAt(poster.video, poster.at), poster.name, poster.widths);
 }
 
 for (const photo of photos) {
