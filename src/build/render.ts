@@ -1,4 +1,4 @@
-import { autoService, business, proposedServices, visitSteps, type CardAction } from '../data/business.ts';
+import { autoService, business, proposedServices } from '../data/business.ts';
 import { categoryInfo, necessaryItem, type ConsentService, type OptionalCategory } from '../data/consent.ts';
 import { icon, iconNames } from '../data/icons.ts';
 import { photos, type PhotoName } from '../data/photos.ts';
@@ -45,41 +45,29 @@ export function replaceTokens(html: string): string {
   });
 }
 
-function cardTitle(title: string, action?: CardAction) {
-  if (!action) return escapeHtml(title);
-  const newTab = action.external ? NEW_TAB : '';
-  return `<a class="card__link" href="${escapeHtml(action.href)}"${externalAttrs(action.external)}>${escapeHtml(title)}${newTab}</a>`;
-}
-
 export function renderServices(): { note: string; cards: string } {
   const confirmed = proposedServices.filter((service) => service.confirmed);
-  const items = confirmed.length > 0 ? confirmed : visitSteps;
-  const note =
-    confirmed.length > 0
-      ? `Ce găsești la atelierul de pe ${business.address.short}.`
-      : 'Vulcanizarea ForceCar funcționează non\u2011stop. Iată cum ajungi la noi cel mai rapid.';
+  const note = `<span data-i18n="services.note">Ce găsești la atelierul de pe ${escapeHtml(business.address.short)}.</span>`;
 
-  const cards = items
+  const cards = confirmed
     .map((item, index) => {
-      const action = 'action' in item ? item.action : undefined;
-      const footer = action
-        ? `<span class="card__action" aria-hidden="true">${escapeHtml(action.label)}${icon('arrow', 'icon icon--sm')}</span>`
-        : '';
-      return `<li class="card${action ? ' card--link' : ''}" data-reveal style="--i:${index}">
+      return `<li class="card" data-reveal style="--i:${index}">
           <div class="card__top"><span class="card__index">${String(index + 1).padStart(2, '0')}</span><span class="card__icon">${icon(item.icon)}</span></div>
-          <h3 class="card__title">${cardTitle(item.title, action)}</h3>
-          <p class="card__text">${escapeHtml(item.text)}</p>
-          ${footer}
+          <h3 class="card__title" data-i18n="service.${item.id}.title">${escapeHtml(item.title)}</h3>
+          <p class="card__text" data-i18n="service.${item.id}.text">${escapeHtml(item.text)}</p>
         </li>`;
     })
     .join('\n');
 
-  return { note: escapeHtml(note), cards };
+  return { note, cards };
 }
 
 export function renderAutoService(): { list: string; cta: string } {
   const list = autoService.services
-    .map((service, index) => `<li data-reveal style="--i:${index}">${escapeHtml(service)}</li>`)
+    .map(
+      (service, index) =>
+        `<li data-reveal style="--i:${index}" data-i18n="auto.${service.key}">${escapeHtml(service.label)}</li>`,
+    )
     .join('\n');
 
   const url = autoService.url.trim();
@@ -88,7 +76,7 @@ export function renderAutoService(): { list: string; cta: string } {
       list,
       cta: `<span class="btn btn--xl autoservice__cta is-pending" role="text" aria-disabled="true">
                 <span class="btn__icon" aria-hidden="true">${icon('arrow')}</span>
-                <span class="btn__stack"><span class="btn__label">Site-ul service-ului</span><span class="btn__meta">În curând</span></span>
+                <span class="btn__stack"><span class="btn__label" data-i18n="auto.ctaLabel">Site-ul service-ului</span><span class="btn__meta" data-i18n="auto.ctaSoon">În curând</span></span>
               </span>`,
     };
   }
@@ -98,8 +86,8 @@ export function renderAutoService(): { list: string; cta: string } {
     list,
     cta: `<a class="btn btn--primary btn--xl autoservice__cta" href="${escapeHtml(url)}"${externalAttrs(true)}>
                 <span class="btn__icon">${icon('arrow')}</span>
-                <span class="btn__stack"><span class="btn__label">Vezi site-ul service-ului</span><span class="btn__meta">${escapeHtml(new URL(url).hostname.replace(/^www\./, ''))}</span></span>
-                ${NEW_TAB}
+                <span class="btn__stack"><span class="btn__label" data-i18n="auto.ctaLive">Vezi site-ul service-ului</span><span class="btn__meta">${escapeHtml(new URL(url).hostname.replace(/^www\./, ''))}</span></span>
+                <span class="sr-only" data-i18n="newtab"> (se deschide într-o filă nouă)</span>
               </a>`,
   };
 }
@@ -108,10 +96,14 @@ export function renderPhoto(name: PhotoName): string {
   const photo = photos[name];
   const srcset = (ext: string) => photo.widths.map((w) => `/img/${name}-${w}.${ext} ${w}w`).join(', ');
   const largest = photo.widths[photo.widths.length - 1];
+  const altKey = name === 'atelier-raft' ? 'photo.raft' : name === 'jante-sudura' ? 'photo.weld' : '';
+  const altAttr = altKey
+    ? `alt="${escapeHtml(photo.alt)}" data-i18n-alt="${altKey}"`
+    : `alt="${escapeHtml(photo.alt)}"`;
   return `<picture>
               <source type="image/avif" srcset="${srcset('avif')}" sizes="${photo.sizes}" />
               <source type="image/webp" srcset="${srcset('webp')}" sizes="${photo.sizes}" />
-              <img src="/img/${name}-${largest}.jpg" srcset="${srcset('jpg')}" sizes="${photo.sizes}" width="${photo.width}" height="${photo.height}" alt="${escapeHtml(photo.alt)}" loading="lazy" decoding="async" />
+              <img src="/img/${name}-${largest}.jpg" srcset="${srcset('jpg')}" sizes="${photo.sizes}" width="${photo.width}" height="${photo.height}" ${altAttr} loading="lazy" decoding="async" />
             </picture>`;
 }
 
@@ -159,12 +151,12 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 export const indexableRoutes = [
   {
     path: '/',
-    title: 'Vulcanizare 24/7 Chișinău | ForceCar – Ismail 103',
+    title: 'Vulcanizare 24/7 Chișinău | Force-Car – Ismail 103',
     changefreq: 'weekly' as const,
   },
   {
     path: '/confidentialitate/',
-    title: 'Confidențialitate și cookie-uri | ForceCar',
+    title: 'Confidențialitate și cookie-uri | Force-Car',
     changefreq: 'yearly' as const,
   },
 ];
@@ -273,9 +265,9 @@ export function structuredData(siteUrl?: string) {
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'Service auto',
-          itemListElement: autoService.services.map((name) => ({
+          itemListElement: autoService.services.map((service) => ({
             '@type': 'Offer',
-            itemOffered: { '@type': 'Service', name },
+            itemOffered: { '@type': 'Service', name: service.label },
           })),
         },
       },
@@ -343,7 +335,7 @@ export function privacyStructuredData(siteUrl?: string) {
   const page: Record<string, unknown> = {
     '@type': 'WebPage',
     name: indexableRoutes[1].title,
-    description: 'Cum tratează ForceCar datele tale: contact, cookie-uri și drepturile tale.',
+    description: 'Cum tratează Force-Car datele tale: contact, cookie-uri și drepturile tale.',
     inLanguage: 'ro-MD',
     isPartOf: siteUrl ? { '@id': `${siteUrl}/#website` } : undefined,
     about: siteUrl ? { '@id': `${siteUrl}/#business` } : { '@type': 'Organization', name: business.name },
@@ -365,9 +357,8 @@ function usedCategories(services: ConsentService[]) {
 export function renderConsentUi(services: ConsentService[]): string {
   if (services.length === 0) return '';
   const categories = usedCategories(services);
-  const purposes = categories.map((category) => categoryInfo[category].title.toLowerCase()).join(' și ');
 
-  const rows = categories
+  const categoryRows = categories
     .map((category) => {
       const names = services
         .filter((service) => service.category === category)
@@ -375,8 +366,8 @@ export function renderConsentUi(services: ConsentService[]): string {
         .join(', ');
       return `<li class="consent-cat">
             <div class="consent-cat__copy">
-              <h3 class="consent-cat__title" id="consent-${category}-title">${categoryInfo[category].title}</h3>
-              <p class="consent-cat__text" id="consent-${category}-text">${escapeHtml(categoryInfo[category].text)} <span class="consent-cat__services">${names}</span></p>
+              <h3 class="consent-cat__title" id="consent-${category}-title" data-i18n="consent.${category}">${categoryInfo[category].title}</h3>
+              <p class="consent-cat__text" id="consent-${category}-text"><span data-i18n="consent.${category}Text">${escapeHtml(categoryInfo[category].text)}</span> <span class="consent-cat__services">${names}</span></p>
             </div>
             <label class="switch">
               <input type="checkbox" role="switch" data-consent-category="${category}" aria-labelledby="consent-${category}-title" aria-describedby="consent-${category}-text" />
@@ -389,13 +380,13 @@ export function renderConsentUi(services: ConsentService[]): string {
   return `<section class="consent" data-consent-banner hidden aria-labelledby="consent-title">
       <div class="consent__inner">
         <div class="consent__copy">
-          <h2 class="consent__title" id="consent-title">Cookie-uri</h2>
-          <p class="consent__text">Folosim cookie-uri de ${purposes} doar dacă ești de acord. Le poți refuza fără să pierzi nimic din site. Detalii în <a href="/confidentialitate/#cookie-uri">politica de cookie-uri</a>.</p>
+          <h2 class="consent__title" id="consent-title" data-i18n="consent.title">Cookie-uri</h2>
+          <p class="consent__text"><span data-i18n="consent.text">Folosim cookie-uri opționale doar dacă ești de acord. Le poți refuza fără să pierzi nimic din site. Detalii în </span><a href="/confidentialitate/#cookie-uri" data-i18n="consent.policy">politica de cookie-uri</a>.</p>
         </div>
         <div class="consent__actions">
-          <button class="btn btn--sm btn--ghost" type="button" data-consent-action="customize">Personalizează</button>
-          <button class="btn btn--sm btn--ghost" type="button" data-consent-action="reject">Respinge opționalele</button>
-          <button class="btn btn--sm btn--primary" type="button" data-consent-action="accept">Acceptă toate</button>
+          <button class="btn btn--sm btn--ghost" type="button" data-consent-action="customize" data-i18n="consent.customize">Personalizează</button>
+          <button class="btn btn--sm btn--ghost" type="button" data-consent-action="reject" data-i18n="consent.reject">Respinge opționalele</button>
+          <button class="btn btn--sm btn--primary" type="button" data-consent-action="accept" data-i18n="consent.accept">Acceptă toate</button>
         </div>
       </div>
     </section>
@@ -403,24 +394,24 @@ export function renderConsentUi(services: ConsentService[]): string {
     <dialog class="consent-panel" data-consent-panel aria-labelledby="consent-panel-title">
       <div class="consent-panel__body">
       <div class="consent-panel__head">
-        <h2 class="consent-panel__title" id="consent-panel-title">Preferințe cookie-uri</h2>
-        <button class="icon-btn consent-panel__close" type="button" data-consent-action="close">${icon('close')}<span class="sr-only">Închide</span></button>
+        <h2 class="consent-panel__title" id="consent-panel-title" data-i18n="consent.panelTitle">Preferințe cookie-uri</h2>
+        <button class="icon-btn consent-panel__close" type="button" data-consent-action="close">${icon('close')}<span class="sr-only" data-i18n="consent.close">Închide</span></button>
       </div>
-      <p class="consent-panel__intro">Alege ce cookie-uri opționale accepți. Poți reveni oricând din linkul „Setări cookie-uri” din subsolul paginii.</p>
+      <p class="consent-panel__intro" data-i18n="consent.intro">Alege ce cookie-uri opționale accepți. Poți reveni oricând din linkul „Setări cookie-uri” din subsolul paginii.</p>
       <ul class="consent-panel__list" role="list">
         <li class="consent-cat">
           <div class="consent-cat__copy">
-            <h3 class="consent-cat__title">${categoryInfo.necessary.title}</h3>
-            <p class="consent-cat__text">${escapeHtml(categoryInfo.necessary.text)}</p>
+            <h3 class="consent-cat__title" data-i18n="consent.necessary">${categoryInfo.necessary.title}</h3>
+            <p class="consent-cat__text" data-i18n="consent.necessaryText">${escapeHtml(categoryInfo.necessary.text)}</p>
           </div>
-          <span class="consent-cat__always">Mereu active</span>
+          <span class="consent-cat__always" data-i18n="consent.always">Mereu active</span>
         </li>
-        ${rows}
+        ${categoryRows}
       </ul>
       <div class="consent-panel__actions">
-        <button class="btn btn--sm btn--ghost" type="button" data-consent-action="reject">Respinge opționalele</button>
-        <button class="btn btn--sm btn--ghost" type="button" data-consent-action="save">Salvează alegerea</button>
-        <button class="btn btn--sm btn--primary" type="button" data-consent-action="accept">Acceptă toate</button>
+        <button class="btn btn--sm btn--ghost" type="button" data-consent-action="reject" data-i18n="consent.reject">Respinge opționalele</button>
+        <button class="btn btn--sm btn--ghost" type="button" data-consent-action="save" data-i18n="consent.save">Salvează alegerea</button>
+        <button class="btn btn--sm btn--primary" type="button" data-consent-action="accept" data-i18n="consent.accept">Acceptă toate</button>
       </div>
       </div>
     </dialog>`;
@@ -429,29 +420,29 @@ export function renderConsentUi(services: ConsentService[]): string {
 export function renderFooter(services: ConsentService[]): string {
   const settings =
     services.length > 0
-      ? '<li><button class="footer__button" type="button" data-consent-open>Setări cookie-uri</button></li>'
+      ? '<li><button class="footer__button" type="button" data-consent-open data-i18n="footer.cookies">Setări cookie-uri</button></li>'
       : '';
   return `<footer class="footer">
       <div class="container footer__inner">
-        <p class="footer__brand"><strong>ForceCar</strong> <span aria-hidden="true">|</span> Vulcanizare 24/7 · Service auto</p>
+        <p class="footer__brand"><strong>Force-Car</strong> <span aria-hidden="true">|</span><span data-i18n="footer.brand"> Vulcanizare 24/7 · Service auto</span></p>
         <ul class="footer__list" role="list">
           <li><a href="{{phone.href}}">{{phone.display}}</a></li>
-          <li><a href="{{links.maps}}" target="_blank" rel="noopener noreferrer">{{address.short}}{{newtab}}</a></li>
+          <li><a href="{{links.maps}}" target="_blank" rel="noopener noreferrer"><span data-i18n="address.short">{{address.short}}</span><span class="sr-only" data-i18n="newtab"> (se deschide într-o filă nouă)</span></a></li>
           <li><a href="{{email.href}}">{{email.address}}</a></li>
         </ul>
         <ul class="footer__list footer__legal" role="list">
-          <li><a href="/confidentialitate/">Confidențialitate și cookie-uri</a></li>
+          <li><a href="/confidentialitate/" data-i18n="footer.privacy">Confidențialitate și cookie-uri</a></li>
           ${settings}
         </ul>
-        <p class="footer__copy">© {{year}} ForceCar</p>
+        <p class="footer__copy" data-i18n="footer.copy">© {{year}} Force-Car</p>
       </div>
     </footer>`;
 }
 
 export function renderCookieTable(services: ConsentService[]): string {
   if (services.length === 0) {
-    return `<p>Acest site <strong>nu folosește cookie-uri</strong> și nu salvează informații în browserul tău. Nu folosim instrumente de analiză, publicitate sau module de rețele sociale, iar fonturile și imaginile sunt servite direct de pe acest site, fără servicii terțe.</p>
-          <p>Dacă vom adăuga vreodată astfel de instrumente, le vom porni doar după ce îți dai acordul și vom actualiza această pagină.</p>`;
+    return `<p data-i18n="privacy.cookiesNone">Acest site nu folosește cookie-uri și nu salvează informații în browserul tău. Nu folosim instrumente de analiză, publicitate sau module de rețele sociale, iar fonturile și imaginile sunt servite direct de pe acest site, fără servicii terțe.</p>
+          <p data-i18n="privacy.cookiesLater">Dacă vom adăuga vreodată astfel de instrumente, le vom porni doar după ce îți dai acordul și vom actualiza această pagină.</p>`;
   }
   const row = (cells: string[]) => `<tr>${cells.map((cell) => `<td>${cell}</td>`).join('')}</tr>`;
   const kind = (value: string) => (value === 'cookie' ? 'Cookie' : 'Stocare locală');
@@ -460,7 +451,7 @@ export function renderCookieTable(services: ConsentService[]): string {
       `<code>${necessaryItem.name}</code>`,
       kind(necessaryItem.kind),
       categoryInfo.necessary.title,
-      'ForceCar',
+      'Force-Car',
       'Reține alegerea ta privind cookie-urile.',
       necessaryItem.retention,
     ]),
@@ -495,7 +486,7 @@ export function seoHead(siteUrl: string | undefined, path = '/'): string {
   if (!siteUrl || !path) return '';
   const canonical = `${siteUrl}${path}`;
   const image = `${siteUrl}/img/og-forcecar.jpg`;
-  const imageAlt = `ForceCar — Vulcanizare NON-STOP 24/7, ${business.address.short}`;
+  const imageAlt = `Force-Car — Vulcanizare NON-STOP 24/7, ${business.address.short}`;
   return [
     `<link rel="canonical" href="${escapeHtml(canonical)}" />`,
     `<meta property="og:url" content="${escapeHtml(canonical)}" />`,
@@ -512,7 +503,7 @@ export function seoHead(siteUrl: string | undefined, path = '/'): string {
 
 export function robotsTxt(siteUrl?: string) {
   const lines = [
-    '# ForceCar robots.txt',
+    '# Force-Car robots.txt',
     'User-agent: *',
     'Allow: /',
     '',

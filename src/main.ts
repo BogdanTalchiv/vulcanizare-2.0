@@ -1,8 +1,10 @@
 import './styles/fonts.css';
 import './styles/main.css';
 import { business } from './data/business.ts';
+import { initI18n, translate } from './i18n.ts';
 
 document.documentElement.classList.replace('no-js', 'js');
+initI18n();
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -27,7 +29,7 @@ function initMenu() {
   const setOpen = (open: boolean) => {
     nav.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    label.textContent = open ? 'Închide meniul' : 'Deschide meniul';
+    label.textContent = open ? translate('nav.closeMenu') : translate('nav.openMenu');
   };
 
   toggle.hidden = false;
@@ -44,6 +46,7 @@ function initMenu() {
     if (nav.classList.contains('is-open') && !nav.contains(event.target as Node)) setOpen(false);
   });
   wide.addEventListener('change', () => setOpen(false));
+  window.addEventListener('forcecar:locale', () => setOpen(nav.classList.contains('is-open')));
 }
 
 function initReveal() {
@@ -132,12 +135,15 @@ function initHeroVideo() {
   const setPaused = (value: boolean) => {
     paused = value;
     toggle.classList.toggle('is-paused', value);
-    label.textContent = value ? 'Pornește videoclipul de fundal' : 'Oprește videoclipul de fundal';
+    label.textContent = value ? translate('video.play') : translate('video.pause');
     sync();
   };
 
   video.addEventListener('playing', () => video.classList.add('is-playing'));
   toggle.addEventListener('click', () => setPaused(!paused));
+  window.addEventListener('forcecar:locale', () => {
+    if (!toggle.hidden) label.textContent = paused ? translate('video.play') : translate('video.pause');
+  });
   document.addEventListener('visibilitychange', sync);
   desktop.addEventListener('change', () => {
     if (!video.getAttribute('src')) return;
@@ -174,11 +180,19 @@ function initRepair() {
     scene.classList.remove('is-idle');
   }
 
+  const syncLabel = () => {
+    label.textContent = scene.classList.contains('is-paused')
+      ? translate('repair.play')
+      : translate('repair.pause');
+  };
+
   toggle.hidden = false;
+  syncLabel();
   toggle.addEventListener('click', () => {
-    const paused = scene.classList.toggle('is-paused');
-    label.textContent = paused ? 'Pornește animația' : 'Oprește animația';
+    scene.classList.toggle('is-paused');
+    syncLabel();
   });
+  window.addEventListener('forcecar:locale', syncLabel);
 }
 
 /** Seamless loop: two players crossfade so the clip's black fade-in/out never shows. */

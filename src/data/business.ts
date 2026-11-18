@@ -1,5 +1,5 @@
 export const business = {
-  name: 'ForceCar',
+  name: 'Force-Car',
   service: 'Vulcanizare Auto NON-STOP 24/7',
   phone: {
     countryCode: '+373',
@@ -21,9 +21,9 @@ export const business = {
     short: 'str. Ismail 103, Chișinău',
   },
   links: {
-    maps: 'https://www.google.com/maps/search/?api=1&query=ForceCar%2C%20str.%20Ismail%20103%2C%20Chi%C8%99in%C4%83u',
+    maps: 'https://www.google.com/maps/search/?api=1&query=Force-Car%2C%20str.%20Ismail%20103%2C%20Chi%C8%99in%C4%83u',
     whatsapp:
-      'https://wa.me/37379535005?text=Bun%C4%83%20ziua!%20V%C4%83%20scriu%20de%20pe%20site-ul%20ForceCar.%20A%C8%99%20dori%20s%C4%83%20m%C4%83%20programez%20la%20service.',
+      'https://wa.me/37379535005?text=Bun%C4%83%20ziua!%20V%C4%83%20scriu%20de%20pe%20site-ul%20Force-Car.%20A%C8%99%20dori%20s%C4%83%20m%C4%83%20programez%20la%20service.',
   },
   hours: {
     label: 'Vulcanizare NON-STOP 24/7',
@@ -38,18 +38,19 @@ export const business = {
 export const autoService = {
   url: '',
   services: [
-    'Diagnosticare computerizată',
-    'Electrică auto',
-    'Frâne',
-    'Suspensie și direcție',
-    'Schimb ulei și filtre',
-    'Reparații motor',
+    { key: 'diag' as const, label: 'Diagnosticare computerizată' },
+    { key: 'electric' as const, label: 'Electrică auto' },
+    { key: 'brakes' as const, label: 'Frâne' },
+    { key: 'suspension' as const, label: 'Suspensie și direcție' },
+    { key: 'oil' as const, label: 'Schimb ulei și filtre' },
+    { key: 'engine' as const, label: 'Reparații motor' },
   ],
 };
 
 export type IconName = 'puncture' | 'tire' | 'balance' | 'gauge' | 'stack' | 'rim' | 'phone' | 'pin' | 'chat' | 'clock';
 
 export interface ServiceItem {
+  id: 'tire' | 'balance' | 'nitrogen' | 'stock' | 'puncture' | 'rim';
   title: string;
   text: string;
   icon: IconName;
@@ -64,36 +65,42 @@ export interface ServiceItem {
  */
 export const proposedServices: ServiceItem[] = [
   {
+    id: 'tire',
     title: 'Schimb anvelope',
     text: 'Montare și demontare anvelope, schimbarea roților.',
     icon: 'tire',
     confirmed: true,
   },
   {
+    id: 'balance',
     title: 'Echilibrare roți',
     text: 'Echilibrarea roților pe stand, în atelier.',
     icon: 'balance',
     confirmed: true,
   },
   {
+    id: 'nitrogen',
     title: 'Presiune cu azot',
     text: 'Umflarea anvelopelor cu azot și controlul presiunii.',
     icon: 'gauge',
     confirmed: true,
   },
   {
+    id: 'stock',
     title: 'Anvelope pe stoc',
     text: 'Anvelope noi disponibile direct la atelier.',
     icon: 'stack',
     confirmed: true,
   },
   {
+    id: 'puncture',
     title: 'Reparare pene',
     text: 'Reparații pentru anvelope perforate, atunci când acestea pot fi reparate în siguranță.',
     icon: 'puncture',
     confirmed: true,
   },
   {
+    id: 'rim',
     title: 'Reparare jante',
     text: 'Îndreptarea și sudura jantelor, în atelier.',
     icon: 'rim',

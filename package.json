@@ -2,7 +2,7 @@
   "name": "forcecar-vulcanizare",
   "version": "1.0.0",
   "private": true,
-  "description": "ForceCar — Vulcanizare NON-STOP 24/7, str. Ismail 103, Chișinău",
+  "description": "Force-Car — Vulcanizare NON-STOP 24/7, str. Ismail 103, Chișinău",
   "type": "module",
   "scripts": {
     "dev": "vite",
