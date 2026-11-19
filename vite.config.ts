@@ -11,6 +11,7 @@ import {
   renderCookieTable,
   renderDial,
   renderFooter,
+  renderPrices,
   renderServices,
   replacePhotos,
   replaceTokens,
@@ -43,6 +44,7 @@ function forcecarSite(siteUrl: string | undefined, services: ConsentService[]): 
               .replace('<!--@services-->', () => offer.cards)
               .replace('<!--@autoservice-list-->', () => auto.list)
               .replace('<!--@autoservice-cta-->', () => auto.cta)
+              .replace('<!--@prices-->', () => renderPrices())
               .replace('<!--@dial-->', () => renderDial()),
           );
         }

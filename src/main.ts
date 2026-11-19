@@ -300,6 +300,82 @@ function initLoopVideos() {
   document.querySelectorAll<HTMLElement>('[data-loop-video]').forEach(initLoopVideo);
 }
 
+function animatePrice(el: HTMLElement, next: number) {
+  const current = Number(el.dataset.value ?? el.textContent ?? 0);
+  el.dataset.value = String(next);
+  if (reducedMotion.matches || current === next) {
+    el.textContent = String(next);
+    return;
+  }
+  const start = performance.now();
+  const duration = 420;
+  const from = Number.isFinite(current) ? current : next;
+  const tick = (now: number) => {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - (1 - t) ** 3;
+    el.textContent = String(Math.round(from + (next - from) * eased));
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function initPrices() {
+  const root = document.querySelector<HTMLElement>('[data-prices]');
+  if (!root) return;
+
+  const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-price-tab]')];
+  const panels = [...root.querySelectorAll<HTMLElement>('[data-price-panel]')];
+  const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-price-size]')];
+  const autoEl = root.querySelector<HTMLElement>('[data-price-auto]');
+  const suvEl = root.querySelector<HTMLElement>('[data-price-suv]');
+  const labels = root.querySelectorAll<HTMLElement>('[data-price-label]');
+  const rows = root.querySelectorAll<HTMLElement>('[data-price-row]');
+
+  const activateTab = (id: string) => {
+    tabs.forEach((tab) => {
+      const on = tab.dataset.priceTab === id;
+      tab.classList.toggle('is-active', on);
+      tab.setAttribute('aria-selected', String(on));
+    });
+    panels.forEach((panel) => {
+      const on = panel.dataset.pricePanel === id;
+      panel.classList.toggle('is-active', on);
+      panel.hidden = !on;
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      if (!tab.dataset.priceTab) return;
+      activateTab(tab.dataset.priceTab);
+    });
+  });
+
+  const selectSize = (chip: HTMLButtonElement) => {
+    const auto = Number(chip.dataset.auto);
+    const suv = Number(chip.dataset.suv);
+    const id = chip.dataset.priceSize ?? '';
+    chips.forEach((btn) => {
+      const on = btn === chip;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    rows.forEach((row) => row.classList.toggle('is-active', row.dataset.priceRow === id));
+    labels.forEach((label) => {
+      label.textContent = chip.textContent?.trim() ?? '';
+    });
+    if (autoEl && Number.isFinite(auto)) animatePrice(autoEl, auto);
+    if (suvEl && Number.isFinite(suv)) animatePrice(suvEl, suv);
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => selectSize(chip));
+  });
+
+  const active = chips.find((chip) => chip.classList.contains('is-active')) ?? chips[0];
+  if (active) selectSize(active);
+}
+
 initNav();
 initMenu();
 if (import.meta.env.VITE_GA4_ID || import.meta.env.VITE_META_PIXEL_ID) {
@@ -310,3 +386,4 @@ initClock();
 initHeroVideo();
 initRepair();
 initLoopVideos();
+initPrices();

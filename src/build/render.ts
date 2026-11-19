@@ -2,6 +2,16 @@ import { autoService, business, proposedServices } from '../data/business.ts';
 import { categoryInfo, necessaryItem, type ConsentService, type OptionalCategory } from '../data/consent.ts';
 import { icon, iconNames } from '../data/icons.ts';
 import { photos, type PhotoName } from '../data/photos.ts';
+import {
+  busRanges,
+  extras,
+  paintPackages,
+  patches,
+  rimAutoRanges,
+  rimSuvRanges,
+  runFlatSurcharge,
+  wheelWork,
+} from '../data/prices.ts';
 
 const escapeHtml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -60,6 +70,173 @@ export function renderServices(): { note: string; cards: string } {
     .join('\n');
 
   return { note, cards };
+}
+
+function money(value: string | number) {
+  return `<span class="prices__money"><span class="prices__num">${escapeHtml(String(value))}</span> <span data-i18n="prices.currency">lei</span></span>`;
+}
+
+const rangeLabelDefaults: Record<string, string> = {
+  'bus.remove': 'Scos / pus',
+  'bus.mount': 'Demontare / montare',
+  'bus.balance': 'Balansare',
+  'bus.total': 'Total pe roată',
+  'rims.alloy': 'Jante aliaj',
+  'rims.steel': 'Jante oțel',
+  'rims.nitrogen': 'Azot · 4 roți',
+};
+
+function rangeCards(items: { id: string; key: string; value: string }[], prefix: string) {
+  return items
+    .map((item, index) => {
+      const i18nKey = `prices.${prefix}.${item.key}`;
+      const label = rangeLabelDefaults[`${prefix}.${item.key}`] ?? item.key;
+      return `<article class="prices__stat" data-reveal style="--i:${index}">
+              <p class="prices__stat-label" data-i18n="${i18nKey}">${escapeHtml(label)}</p>
+              <p class="prices__stat-value">${money(item.value)}</p>
+            </article>`;
+    })
+    .join('\n');
+}
+
+export function renderPrices(): string {
+  const chips = wheelWork
+    .map(
+      (row, index) =>
+        `<button class="prices__chip${index === 3 ? ' is-active' : ''}" type="button" data-price-size="${row.id}" data-auto="${row.auto}" data-suv="${row.suv}" aria-pressed="${index === 3 ? 'true' : 'false'}">${escapeHtml(row.label)}</button>`,
+    )
+    .join('\n');
+
+  const defaultRow = wheelWork[3] ?? wheelWork[0];
+
+  const tableRows = wheelWork
+    .map(
+      (row) => `<tr data-price-row="${row.id}">
+                <th scope="row">${escapeHtml(row.label)}</th>
+                <td>${money(row.auto)}</td>
+                <td>${money(row.suv)}</td>
+              </tr>`,
+    )
+    .join('\n');
+
+  const patchCards = patches
+    .map(
+      (item, index) => `<li class="prices__extra" data-reveal style="--i:${index}">
+              <span class="prices__extra-name" data-i18n="prices.extra.${item.key}">${escapeHtml(item.key)}</span>
+              ${money(item.price)}
+            </li>`,
+    )
+    .join('\n');
+
+  const extraCards = extras
+    .map((item, index) => {
+      const from = item.id === 'antitheft';
+      return `<li class="prices__extra" data-reveal style="--i:${index}">
+              <span class="prices__extra-name" data-i18n="prices.extra.${item.key}">${escapeHtml(item.key)}</span>
+              <span class="prices__money">${from ? '<span data-i18n="prices.from">de la </span>' : ''}<span class="prices__num">${escapeHtml(item.price)}</span> <span data-i18n="prices.currency">lei</span></span>
+            </li>`;
+    })
+    .join('\n');
+
+  const paintDefaults: Record<string, { title: string; note: string }> = {
+    paintSolid: { title: 'Într-o culoare', note: 'Set complet · R13–R23' },
+    paintDiamond: { title: 'Culoare + tăiere diamant', note: 'Set complet · R13–R23' },
+    paintCutOnly: { title: 'Tăiere diamant + lac', note: 'Fără vopsire · R13–R23' },
+    paintSteel: { title: 'Vopsire jante metal', note: 'Tot setul' },
+    paintCaliper: { title: 'Vopsire suport frână', note: 'Pe set' },
+  };
+
+  const paintCards = paintPackages
+    .map((item, index) => {
+      const value = item.to == null ? String(item.from) : `${item.from}–${item.to}`;
+      const fromOnly = item.to == null;
+      const defaults = paintDefaults[item.key] ?? { title: item.key, note: '' };
+      return `<article class="prices__paint" data-reveal style="--i:${index}">
+              <p class="prices__paint-index">0${index + 1}</p>
+              <h3 class="prices__paint-title" data-i18n="prices.paint.${item.key}">${escapeHtml(defaults.title)}</h3>
+              <p class="prices__paint-price">${fromOnly ? '<span data-i18n="prices.from">de la </span>' : ''}${money(value)}</p>
+              <p class="prices__paint-note" data-i18n="prices.paint.${item.key}Note">${escapeHtml(defaults.note)}</p>
+            </article>`;
+    })
+    .join('\n');
+
+  return `<div class="prices" data-prices>
+          <div class="prices__tabs" role="tablist" data-i18n-aria="prices.tabsLabel" aria-label="Categorii prețuri">
+            <button class="prices__tab is-active" type="button" role="tab" id="prices-tab-wheels" aria-selected="true" aria-controls="prices-panel-wheels" data-price-tab="wheels" data-i18n="prices.tab.wheels">Roți</button>
+            <button class="prices__tab" type="button" role="tab" id="prices-tab-bus" aria-selected="false" aria-controls="prices-panel-bus" data-price-tab="bus" data-i18n="prices.tab.bus">Autobuz</button>
+            <button class="prices__tab" type="button" role="tab" id="prices-tab-rims" aria-selected="false" aria-controls="prices-panel-rims" data-price-tab="rims" data-i18n="prices.tab.rims">Jante</button>
+            <button class="prices__tab" type="button" role="tab" id="prices-tab-extra" aria-selected="false" aria-controls="prices-panel-extra" data-price-tab="extra" data-i18n="prices.tab.extra">Extra</button>
+            <button class="prices__tab" type="button" role="tab" id="prices-tab-paint" aria-selected="false" aria-controls="prices-panel-paint" data-price-tab="paint" data-i18n="prices.tab.paint">Vopsire</button>
+          </div>
+
+          <div class="prices__panels">
+            <div class="prices__panel is-active" role="tabpanel" id="prices-panel-wheels" aria-labelledby="prices-tab-wheels" data-price-panel="wheels">
+              <p class="prices__lead" data-reveal data-i18n="prices.wheels.lead">Alege diametrul — prețul e pentru o roată, complet (scos, demontare, montare, balansare).</p>
+              <div class="prices__picker" data-reveal>
+                <p class="prices__picker-label" data-i18n="prices.wheels.diameter">Diametru</p>
+                <div class="prices__chips" role="group" data-i18n-aria="prices.wheels.diameterGroup" aria-label="Diametrul jantei">${chips}</div>
+              </div>
+              <div class="prices__stage" data-reveal>
+                <article class="prices__quote">
+                  <p class="prices__quote-kicker" data-i18n="prices.wheels.auto">Autoturism</p>
+                  <p class="prices__quote-value"><span data-price-auto>${defaultRow.auto}</span> <span data-i18n="prices.currency">lei</span></p>
+                  <p class="prices__quote-meta"><span data-i18n="prices.wheels.perWheel">pe o roată</span> · <span data-price-label>${escapeHtml(defaultRow.label)}</span></p>
+                </article>
+                <article class="prices__quote prices__quote--accent">
+                  <p class="prices__quote-kicker">SUV</p>
+                  <p class="prices__quote-value"><span data-price-suv>${defaultRow.suv}</span> <span data-i18n="prices.currency">lei</span></p>
+                  <p class="prices__quote-meta"><span data-i18n="prices.wheels.perWheel">pe o roată</span> · <span data-price-label>${escapeHtml(defaultRow.label)}</span></p>
+                </article>
+              </div>
+              <p class="prices__note" data-reveal><span class="prices__note-tag" data-i18n="prices.noteTag">Atenție</span> <span data-i18n="prices.wheels.note">Pentru anvelope RunFlat sau volum mare (de la 265, profil 25/40) se adaugă ${runFlatSurcharge} lei la montaj.</span></p>
+              <div class="prices__table-wrap" data-reveal>
+                <table class="prices__table">
+                  <caption class="sr-only" data-i18n="prices.wheels.tableCaption">Prețuri lucru la o roată, autoturism și SUV</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" data-i18n="prices.wheels.colSize">Diametru</th>
+                      <th scope="col" data-i18n="prices.wheels.auto">Autoturism</th>
+                      <th scope="col">SUV</th>
+                    </tr>
+                  </thead>
+                  <tbody>${tableRows}</tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="prices__panel" role="tabpanel" id="prices-panel-bus" aria-labelledby="prices-tab-bus" data-price-panel="bus" hidden>
+              <p class="prices__lead" data-reveal data-i18n="prices.bus.lead">Lucru la o roată de autobuz, diametre R14–R21 — în funcție de mărime.</p>
+              <div class="prices__stats">${rangeCards(busRanges, 'bus')}</div>
+            </div>
+
+            <div class="prices__panel" role="tabpanel" id="prices-panel-rims" aria-labelledby="prices-tab-rims" data-price-panel="rims" hidden>
+              <p class="prices__lead" data-reveal data-i18n="prices.rims.lead">Îndreptare jante și umflare cu azot — prețurile variază după diametru.</p>
+              <div class="prices__rim-grid">
+                <section class="prices__rim-card" data-reveal>
+                  <h3 class="prices__rim-title" data-i18n="prices.rims.autoTitle">Autoturisme · R13–R22</h3>
+                  <div class="prices__stats prices__stats--compact">${rangeCards(rimAutoRanges, 'rims')}</div>
+                </section>
+                <section class="prices__rim-card" data-reveal style="--i:1">
+                  <h3 class="prices__rim-title" data-i18n="prices.rims.suvTitle">SUV · R14–R23</h3>
+                  <div class="prices__stats prices__stats--compact">${rangeCards(rimSuvRanges, 'rims')}</div>
+                </section>
+              </div>
+            </div>
+
+            <div class="prices__panel" role="tabpanel" id="prices-panel-extra" aria-labelledby="prices-tab-extra" data-price-panel="extra" hidden>
+              <p class="prices__lead" data-reveal data-i18n="prices.extra.lead">Reparații, ventile și alte lucrări din atelier.</p>
+              <h3 class="prices__subhead" data-reveal data-i18n="prices.extra.patchesTitle">Plasturi</h3>
+              <ul class="prices__extras" role="list">${patchCards}</ul>
+              <h3 class="prices__subhead" data-reveal data-i18n="prices.extra.moreTitle">Alte servicii</h3>
+              <ul class="prices__extras" role="list">${extraCards}</ul>
+            </div>
+
+            <div class="prices__panel" role="tabpanel" id="prices-panel-paint" aria-labelledby="prices-tab-paint" data-price-panel="paint" hidden>
+              <p class="prices__lead" data-reveal data-i18n="prices.paint.lead">Vopsire și finisaj jante — preț pe set, în funcție de diametru (R13–R23).</p>
+              <div class="prices__paint-grid">${paintCards}</div>
+            </div>
+          </div>
+        </div>`;
 }
 
 export function renderAutoService(): { list: string; cta: string } {
