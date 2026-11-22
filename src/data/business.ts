@@ -44,6 +44,9 @@ export const autoService = {
     { key: 'suspension' as const, label: 'Suspensie și direcție' },
     { key: 'oil' as const, label: 'Schimb ulei și filtre' },
     { key: 'engine' as const, label: 'Reparații motor' },
+    { key: 'accident' as const, label: 'Reparația auto după accident' },
+    { key: 'body' as const, label: 'Îndreptarea caroseriei auto' },
+    { key: 'paint' as const, label: 'Servicii de vopsire auto' },
   ],
 };
 
